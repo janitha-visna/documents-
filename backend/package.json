@@ -5,7 +5,8 @@
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
     "start": "node src/app.js",
-    "dev": "nodemon src/app.js"
+    "dev": "nodemon src/app.js",
+    "migrate": "npx sequelize-cli db:migrate"
   },
   "keywords": [],
   "author": "",
@@ -17,6 +18,7 @@
     "express": "^4.21.2",
     "multer": "^1.4.5-lts.1",
     "mysql2": "^3.12.0",
+    "pdf-parse": "^1.1.1",
     "sequelize": "^6.37.5"
   },
   "devDependencies": {
