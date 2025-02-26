@@ -1,0 +1,23 @@
+{
+  "development": {
+    "username": "root",
+    "password": "root",
+    "database": "document_management",
+    "host": "localhost", 
+    "dialect": "mysql"
+  },
+  "test": {
+    "username": "root",
+    "password": "root",
+    "database": "document_management_test",
+    "host": "localhost", 
+    "dialect": "mysql"
+  },
+  "production": {
+    "username": "root",
+    "password": "root",
+    "database": "document_management_prod",
+    "host": "localhost", 
+    "dialect": "mysql"
+  }
+}
