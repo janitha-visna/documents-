@@ -1,12 +1,8 @@
-import FileUpload from "./components/FileUpload";
-import "./App.css";
+import { RouterProvider } from "react-router-dom";
+import router from "./routes";
 
-function App() {
-  return (
-    <div>
-      <FileUpload />
-    </div>
-  );
-}
+const App = () => {
+  return <RouterProvider router={router} />;
+};
 
 export default App;
