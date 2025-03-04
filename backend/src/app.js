@@ -1,6 +1,7 @@
 const express = require("express");
 const cors = require("cors");
 const fileRoutes = require("./routes/fileRoutes");
+const flowRoutes = require("./routes/flowRoutes");
 const { ensureUploadsDirExists } = require("./config/fileSystem");
 
 // Initialize Express app
@@ -16,6 +17,7 @@ app.use(express.json());
 
 // Routes
 app.use("/api", fileRoutes);
+app.use("/api", flowRoutes); 
 
 // Start the server
 app.listen(PORT, () => {
