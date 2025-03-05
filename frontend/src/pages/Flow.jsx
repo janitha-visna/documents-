@@ -1,4 +1,4 @@
-import React, { useCallback, useRef, useEffect } from "react";
+import React, { useCallback, useRef, useEffect, useState } from "react";
 import {
   ReactFlow,
   MiniMap,
@@ -72,31 +72,12 @@ const CustomEdge = ({ id, sourceX, sourceY, targetX, targetY, style }) => {
 const nodeTypes = { custom: CustomNode };
 const edgeTypes = { straight: CustomEdge };
 
-const initialNodes = [
-  {
-    id: "1",
-    type: "custom",
-    position: { x: 0, y: 0 },
-    data: { label: "Node 1" },
-  },
-  {
-    id: "2",
-    type: "custom",
-    position: { x: 200, y: 0 },
-    data: { label: "Node 2" },
-  },
-];
-
-const initialEdges = [
-  { id: "1-2", type: "straight", source: "1", target: "2", animated: true },
-];
-
 const Flow = () => {
   const store = useStoreApi();
   const { getInternalNode } = useReactFlow();
   const edgeReconnectSuccessful = useRef(true);
-  const [nodes, setNodes, onNodesChange] = useNodesState(initialNodes);
-  const [edges, setEdges, onEdgesChange] = useEdgesState(initialEdges);
+  const [nodes, setNodes, onNodesChange] = useNodesState([]);
+  const [edges, setEdges, onEdgesChange] = useEdgesState([]);
   const debounceTimeout = useRef(null);
 
   const saveToAPI = useCallback(() => {
@@ -128,6 +109,24 @@ const Flow = () => {
       if (debounceTimeout.current) clearTimeout(debounceTimeout.current);
     };
   }, [nodes, edges, saveToAPI]);
+
+  useEffect(() => {
+    fetch("http://localhost:5000/api/flow")
+      .then((response) => response.json())
+      .then((data) => {
+        if (data.success) {
+          const fetchedNodes = data.data.nodes.map((node) => ({
+            ...node,
+            position: { x: node.position_x, y: node.position_y },
+          }));
+          const fetchedEdges = data.data.edges;
+
+          setNodes(fetchedNodes);
+          setEdges(fetchedEdges);
+        }
+      })
+      .catch((error) => console.error("Error fetching flow data:", error));
+  }, []);
 
   const getClosestEdge = useCallback(
     (node) => {
