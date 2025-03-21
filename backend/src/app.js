@@ -12,6 +12,9 @@ const PORT = process.env.PORT || 5000;
 // Ensure uploads directory exists
 ensureUploadsDirExists();
 
+// Serve static files from uploads directory
+app.use("/files", express.static("uploads"));
+
 // Middleware
 app.use(cors());
 app.use(express.json());

@@ -33,4 +33,25 @@ const uploadFile = async (req, res) => {
   }
 };
 
-module.exports = { uploadFile };
+
+
+
+//controller to fetch documnts info from documnt model
+const getDocuments = async (req, res) => {
+  try {
+    const documents = await Document.findAll({
+      order: [["uploadDate", "DESC"]], // Get newest documents first
+    });
+    res.status(200).json(documents);
+  } catch (error) {
+    console.error("Error fetching documents:", error);
+    res.status(500).json({ message: "Error fetching documents" });
+  }
+};
+
+module.exports = {
+  uploadFile,
+  getDocuments,
+};
+
+
