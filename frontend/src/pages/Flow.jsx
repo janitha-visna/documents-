@@ -34,6 +34,7 @@ const Flow = () => {
   const [nodes, setNodes, onNodesChange] = useNodesState([]);
   const [edges, setEdges, onEdgesChange] = useEdgesState([]);
   const debounceTimeout = useRef(null);
+    const [selectedNode, setSelectedNode] = useState(null);
 
   const saveToAPI = useCallback(() => {
     const payload = { nodes, edges };
@@ -197,6 +198,25 @@ const Flow = () => {
     setNodes((nds) => [...nds, newNode]);
   };
 
+  // Function to handle node selection
+  const onNodeClick = useCallback((event, node) => {
+    setSelectedNode(node);
+  }, []);
+
+  // Function to delete the selected node
+  const deleteNode = useCallback(() => {
+    if (selectedNode) {
+      setNodes((nds) => nds.filter((node) => node.id !== selectedNode.id));
+      setEdges((eds) =>
+        eds.filter(
+          (edge) =>
+            edge.source !== selectedNode.id && edge.target !== selectedNode.id
+        )
+      );
+      setSelectedNode(null); // Clear the selected node after deletion
+    }
+  }, [selectedNode, setNodes, setEdges]);
+
   // Define the double-click handler function
   const handleNodeDoubleClick = useCallback((event, node) => {
     console.log("Node double-clicked:", node);
@@ -221,29 +241,54 @@ const Flow = () => {
         onNodeDrag={onNodeDrag}
         onNodeDragStop={onNodeDragStop}
         onNodeDoubleClick={handleNodeDoubleClick} // Add the double-click handler
+        onNodeClick={onNodeClick} // Add the click handler
         fitView
       >
         <MiniMap />
         <Background variant="dots" gap={12} size={1} />
       </ReactFlow>
 
-      <button
-        onClick={addNode}
+      <div
         style={{
           position: "absolute",
           top: "10px",
           left: "10px",
           zIndex: 10,
-          padding: "10px",
-          background: "#007bff",
-          color: "#fff",
-          border: "none",
-          borderRadius: "5px",
-          cursor: "pointer",
+          display: "flex",
+          flexDirection: "column",
+          gap: "10px", // Add spacing between buttons
         }}
       >
-        Add Node
-      </button>
+        <button
+          onClick={addNode}
+          style={{
+            padding: "10px",
+            background: "#007bff",
+            color: "#fff",
+            border: "none",
+            borderRadius: "5px",
+            cursor: "pointer",
+          }}
+        >
+          Add Node
+        </button>
+
+        <button
+          onClick={deleteNode}
+          disabled={!selectedNode}
+          style={{
+            padding: "10px",
+            background: "#ff4d4d",
+            color: "#fff",
+            border: "none",
+            borderRadius: "5px",
+            cursor: "pointer",
+            opacity: selectedNode ? 1 : 0.5,
+          }}
+        >
+          Delete Node
+        </button>
+      </div>
     </div>
   );
 };
