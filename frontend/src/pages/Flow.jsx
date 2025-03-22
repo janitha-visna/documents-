@@ -19,55 +19,10 @@ import {
 
 import "@xyflow/react/dist/style.css";
 
+import CustomNode from "./networkui/CustomNode";
+import CustomEdge from "./networkui/CustomEdge";
+
 const MIN_DISTANCE = 150;
-
-const CustomNode = ({ data }) => (
-  <div
-    style={{
-      padding: "10px",
-      border: "1px solid #ddd",
-      borderRadius: "5px",
-      background: "#83A0C4",
-      position: "relative",
-    }}
-  >
-    <Handle type="target" position="left" style={{ background: "blue" }} />
-    {data.label}
-    <Handle type="source" position="right" style={{ background: "green" }} />
-  </div>
-);
-
-const CustomEdge = ({ id, sourceX, sourceY, targetX, targetY, style }) => {
-  const { setEdges } = useReactFlow();
-  const [edgePath] = getStraightPath({ sourceX, sourceY, targetX, targetY });
-
-  return (
-    <>
-      <BaseEdge id={id} path={edgePath} style={style} />
-      <EdgeLabelRenderer>
-        <button
-          style={{
-            position: "absolute",
-            transform: `translate(-50%, -50%) translate(${
-              (sourceX + targetX) / 2
-            }px,${(sourceY + targetY) / 2}px)`,
-            pointerEvents: "all",
-            fontSize: "12px",
-            padding: "2px 6px",
-            background: "#ff4444",
-            color: "white",
-            border: "none",
-            borderRadius: "4px",
-            cursor: "pointer",
-          }}
-          onClick={() => setEdges((es) => es.filter((e) => e.id !== id))}
-        >
-          ×
-        </button>
-      </EdgeLabelRenderer>
-    </>
-  );
-};
 
 const nodeTypes = { custom: CustomNode };
 const edgeTypes = { straight: CustomEdge };
