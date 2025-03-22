@@ -27,7 +27,7 @@ const CustomNode = ({ data }) => (
       padding: "10px",
       border: "1px solid #ddd",
       borderRadius: "5px",
-      background: "#fff",
+      background: "#83A0C4",
       position: "relative",
     }}
   >
@@ -242,6 +242,13 @@ const Flow = () => {
     setNodes((nds) => [...nds, newNode]);
   };
 
+  // Define the double-click handler function
+  const handleNodeDoubleClick = useCallback((event, node) => {
+    console.log("Node double-clicked:", node);
+    // You can perform any action here, such as opening a modal, editing the node, etc.
+    alert(`Node "${node.data.label}" double-clicked!`);
+  }, []);
+
   return (
     <div style={{ width: "100vw", height: "100vh" }}>
       <ReactFlow
@@ -258,6 +265,7 @@ const Flow = () => {
         onReconnectEnd={onReconnectEnd}
         onNodeDrag={onNodeDrag}
         onNodeDragStop={onNodeDragStop}
+        onNodeDoubleClick={handleNodeDoubleClick} // Add the double-click handler
         fitView
       >
         <MiniMap />
