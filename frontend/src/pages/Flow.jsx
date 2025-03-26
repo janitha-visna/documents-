@@ -79,6 +79,7 @@ const Flow = () => {
 
           setNodes(fetchedNodes);
           setEdges(fetchedEdges);
+          console.log("fer",fetchedNodes.map((node)=>node.id));
         }
       })
       .catch((error) => console.error("Error fetching flow data:", error));
@@ -217,6 +218,15 @@ const Flow = () => {
     }
   }, [selectedNode, setNodes, setEdges]);
 
+  // Function to delete all nodes and edges
+  const handleDeleteAllNodes = useCallback(() => {
+    if (window.confirm("Are you sure you want to delete all nodes?")) {
+      setNodes([]);
+      setEdges([]);
+      setSelectedNode(null);
+    }
+  }, [setNodes, setEdges]);
+
   // Define the double-click handler function
   const handleNodeDoubleClick = useCallback((event, node) => {
     console.log("Node double-clicked:", node);
@@ -303,6 +313,21 @@ const Flow = () => {
           }}
         >
           Delete Node
+        </button>
+        <button
+          onClick={handleDeleteAllNodes}
+          disabled={nodes.length === 0}
+          style={{
+            padding: "10px",
+            background: "#ff6b6b",
+            color: "#fff",
+            border: "none",
+            borderRadius: "5px",
+            cursor: "pointer",
+            opacity: nodes.length === 0 ? 0.5 : 1,
+          }}
+        >
+          Delete All Nodes
         </button>
         <button
           onClick={handleRenameNode}
