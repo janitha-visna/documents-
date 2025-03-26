@@ -34,7 +34,7 @@ const Flow = () => {
   const [nodes, setNodes, onNodesChange] = useNodesState([]);
   const [edges, setEdges, onEdgesChange] = useEdgesState([]);
   const debounceTimeout = useRef(null);
-    const [selectedNode, setSelectedNode] = useState(null);
+  const [selectedNode, setSelectedNode] = useState(null);
 
   const saveToAPI = useCallback(() => {
     const payload = { nodes, edges };
@@ -224,6 +224,22 @@ const Flow = () => {
     alert(`Node "${node.data.label}" double-clicked!`);
   }, []);
 
+  // Function to rename the selected node
+  const handleRenameNode = useCallback(() => {
+    if (!selectedNode) return;
+
+    const newLabel = prompt("Enter new node name", selectedNode.data.label);
+    if (newLabel !== null) {
+      setNodes(
+        nodes.map((node) =>
+          node.id === selectedNode.id
+            ? { ...node, data: { ...node.data, label: newLabel } }
+            : node
+        )
+      );
+    }
+  }, [selectedNode, nodes, setNodes]);
+
   return (
     <div style={{ width: "100vw", height: "100vh" }}>
       <ReactFlow
@@ -287,6 +303,21 @@ const Flow = () => {
           }}
         >
           Delete Node
+        </button>
+        <button
+          onClick={handleRenameNode}
+          disabled={!selectedNode}
+          style={{
+            padding: "10px",
+            background: "#4CAF50",
+            color: "#fff",
+            border: "none",
+            borderRadius: "5px",
+            cursor: "pointer",
+            opacity: selectedNode ? 1 : 0.5,
+          }}
+        >
+          Rename Node
         </button>
       </div>
     </div>
