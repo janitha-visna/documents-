@@ -23,6 +23,18 @@ module.exports = {
         type: Sequelize.JSON,
         allowNull: false,
       },
+      filename: {
+        type: Sequelize.STRING,
+        allowNull: true,
+      },
+      title: {
+        type: Sequelize.STRING,
+        allowNull: true,
+      },
+      author: {
+        type: Sequelize.STRING,
+        allowNull: true,
+      },
       createdAt: {
         allowNull: false,
         type: Sequelize.DATE,
