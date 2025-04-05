@@ -16,7 +16,7 @@ import {
   useStoreApi,
   ReactFlowProvider,
 } from "@xyflow/react";
-
+import axios from "axios";
 import "@xyflow/react/dist/style.css";
 
 import CustomNode from "./networkui/CustomNode";
@@ -35,6 +35,10 @@ const Flow = () => {
   const [edges, setEdges, onEdgesChange] = useEdgesState([]);
   const debounceTimeout = useRef(null);
   const [selectedNode, setSelectedNode] = useState(null);
+  const [editingNode, setEditingNode] = useState();
+  const [title, setTitle] = useState("");
+  const [file, setFile] = useState("");
+  const [isCreating, setIsCreating] = useState(false);
 
   const saveToAPI = useCallback(() => {
     const payload = { nodes, edges };
@@ -79,7 +83,10 @@ const Flow = () => {
 
           setNodes(fetchedNodes);
           setEdges(fetchedEdges);
-          console.log("fer",fetchedNodes.map((node)=>node.id));
+          console.log(
+            "fer",
+            fetchedNodes.map((node) => node.id)
+          );
         }
       })
       .catch((error) => console.error("Error fetching flow data:", error));
@@ -189,15 +196,101 @@ const Flow = () => {
     setEdges((eds) => eds.filter((edge) => !edgesToDelete.includes(edge)));
   }, []);
 
+  // const addNode = () => {
+  //   const newNode = {
+  //     id: `${nodes.length + 1}`,
+  //     type: "custom",
+  //     position: { x: Math.random() * 500, y: Math.random() * 500 },
+  //     data: { label: `Node ${nodes.length + 1}` },
+  //   };
+  //   setNodes((nds) => [...nds, newNode]);
+  // };
+
   const addNode = () => {
-    const newNode = {
-      id: `${nodes.length + 1}`,
-      type: "custom",
-      position: { x: Math.random() * 500, y: Math.random() * 500 },
-      data: { label: `Node ${nodes.length + 1}` },
-    };
-    setNodes((nds) => [...nds, newNode]);
+    setIsCreating(true);
   };
+
+  const submitImage = useCallback(
+    async (e) => {
+      e.preventDefault();
+      if ((!isCreating && !editingNode) || !title || !file) return;
+
+      try {
+        // 1. First save nodes/edges
+        const saveResponse = await fetch("http://localhost:5000/api/save", {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({ nodes, edges }),
+        });
+
+        if (!saveResponse.ok) throw new Error("Failed to save flow");
+
+        // 2. After successful save, upload file
+        const formData = new FormData();
+        formData.append("file", file);
+        formData.append("title", title);
+
+        const uploadResponse = await axios.post(
+          "http://localhost:5000/api/upload",
+          formData,
+          { headers: { "Content-Type": "multipart/form-data" } }
+        );
+
+        // 3. Update UI with new node/data
+        if (isCreating) {
+          const newNode = {
+            id: `${nodes.length + 1}`,
+            type: "custom",
+            position: { x: Math.random() * 500, y: Math.random() * 500 },
+            data: {
+              label: title,
+              pdfTitle: title,
+              pdfUrl: uploadResponse.data.fileUrl,
+            },
+          };
+          setNodes((nds) => [...nds, newNode]);
+        } else {
+          setNodes((nds) =>
+            nds.map((node) =>
+              node.id === editingNode.id
+                ? {
+                    ...node,
+                    data: {
+                      ...node.data,
+                      pdfTitle: title,
+                      pdfUrl: uploadResponse.data.fileUrl,
+                    },
+                  }
+                : node
+            )
+          );
+        }
+
+        // Reset form state
+        setIsCreating(false);
+        setEditingNode(null);
+        setTitle("");
+        setFile(null);
+      } catch (error) {
+        console.error("Error:", error);
+        alert(
+          error.response?.data?.message ||
+            error.message ||
+            "An error occurred. Please try again."
+        );
+      }
+    },
+    [isCreating, editingNode, nodes, edges, title, file, setNodes]
+  );
+
+  const closeForm = useCallback(() => {
+    setIsCreating(false);
+    setEditingNode(null);
+    setTitle("");
+    setFile(null);
+  }, []);
 
   // Function to handle node selection
   const onNodeClick = useCallback((event, node) => {
@@ -231,8 +324,64 @@ const Flow = () => {
   const handleNodeDoubleClick = useCallback((event, node) => {
     console.log("Node double-clicked:", node);
     // You can perform any action here, such as opening a modal, editing the node, etc.
-    alert(`Node "${node.data.label}" double-clicked!`);
+    setEditingNode(node);
+    setTitle(node.data.pdfTitle || ""); // Initialize form with existing data
   }, []);
+
+  // Add form submission handler
+  // const submitImage = useCallback(
+  //   async (e) => {
+  //     e.preventDefault();
+
+  //     if (!editingNode || !file) return;
+
+  //     const formData = new FormData();
+  //     formData.append("file", file);
+  //     formData.append("title", title);
+  //     //formData.append("nodeId", editingNode.id);
+
+  //     try {
+  //       const result = await axios.post(
+  //         "http://localhost:5000/api/upload",
+  //         formData,
+  //         {
+  //           headers: { "Content-Type": "multipart/form-data" },
+  //         }
+  //       );
+
+  //  Update the node data with PDF information
+  //   setNodes(
+  //     nodes.map((node) =>
+  //       node.id === editingNode.id
+  //         ? {
+  //             ...node,
+  //             data: {
+  //               ...node.data,
+  //               pdfTitle: title,
+  //               pdfUrl: result.data.fileUrl, // Access via result.data
+  //             },
+  //           }
+  //         : node
+  //     )
+  //   );
+
+  //       setEditingNode(null);
+  //       setTitle("");
+  //       setFile(null);
+  //     } catch (error) {
+  //       console.error("Upload error:", error.response?.data || error.message);
+  //       alert("Upload failed. Please try again.");
+  //     }
+  //   },
+  //   [editingNode, file, title, nodes, setNodes]
+  // );
+
+  // Add close form handler
+  // const closeForm = useCallback(() => {
+  //   setEditingNode(null);
+  //   setTitle("");
+  //   setFile(null);
+  // }, []);
 
   // Function to rename the selected node
   const handleRenameNode = useCallback(() => {
@@ -273,7 +422,86 @@ const Flow = () => {
         <MiniMap />
         <Background variant="dots" gap={12} size={1} />
       </ReactFlow>
-
+      {(isCreating || editingNode) && (
+        <div
+          style={{
+            position: "absolute",
+            top: "50%",
+            left: "50%",
+            transform: "translate(-50%, -50%)",
+            zIndex: 1000,
+            background: "white",
+            padding: "20px",
+            borderRadius: "8px",
+            boxShadow: "0 2px 10px rgba(0,0,0,0.1)",
+          }}
+        >
+          <form
+            onSubmit={submitImage}
+            style={{ display: "flex", flexDirection: "column", gap: "10px" }}
+          >
+            <h4>
+              {isCreating
+                ? "Upload PDF for New Node"
+                : `Upload PDF for ${editingNode?.data?.label || ""}`}
+            </h4>
+            <input
+              type="text"
+              placeholder="Document Title"
+              value={title}
+              onChange={(e) => setTitle(e.target.value)}
+              required
+              style={{
+                padding: "8px",
+                borderRadius: "4px",
+                border: "1px solid #ddd",
+              }}
+            />
+            <input
+              type="file"
+              accept="application/pdf"
+              onChange={(e) => setFile(e.target.files[0])}
+              required
+              style={{ padding: "4px" }}
+            />
+            <div
+              style={{
+                display: "flex",
+                gap: "10px",
+                justifyContent: "flex-end",
+              }}
+            >
+              <button
+                type="button"
+                onClick={closeForm}
+                style={{
+                  padding: "8px 16px",
+                  background: "#ff4444",
+                  color: "white",
+                  border: "none",
+                  borderRadius: "4px",
+                  cursor: "pointer",
+                }}
+              >
+                Cancel
+              </button>
+              <button
+                type="submit"
+                style={{
+                  padding: "8px 16px",
+                  background: "#4CAF50",
+                  color: "white",
+                  border: "none",
+                  borderRadius: "4px",
+                  cursor: "pointer",
+                }}
+              >
+                Upload
+              </button>
+            </div>
+          </form>
+        </div>
+      )}
       <div
         style={{
           position: "absolute",
