@@ -5,10 +5,23 @@ const sequelize = require("../config/database");
 
 exports.saveFlow = async (req, res) => {
   const transaction = await sequelize.transaction();
-
+  
   try {
-    const { nodes = [], edges = [] } = req.body;
+    const { requestId, nodes = [], edges = [] } = req.body;
+    console.log("Received requestId node :", requestId); // Should now log correctly
+    // Logging nodes array details
+    console.log("Received nodes array:");
+    console.log(JSON.stringify(nodes, null, 2)); // Formatted JSON output
+    console.log(`Number of nodes received: ${nodes.length}`);
 
+    // Log individual node details if needed
+    nodes.forEach((node, index) => {
+      console.log(`Node ${index + 1}:`);
+      console.log(`- ID: ${node.id}`);
+      console.log(`- Type: ${node.type}`);
+      console.log(`- Position: (${node.position.x}, ${node.position.y})`);
+      console.log(`- Unique ID: ${node.uniqueId}`); // From your previous implementation
+    });
     // Clear existing data first
     await Edge.destroy({ where: {}, transaction }); // Delete edges first
     await Node.destroy({ where: {}, transaction }); // Then delete nodes
@@ -20,6 +33,7 @@ exports.saveFlow = async (req, res) => {
       position_x: node.position.x,
       position_y: node.position.y,
       data: node.data,
+      ref: node.ref,
     }));
 
     const edgeRecords = edges.map((edge) => ({

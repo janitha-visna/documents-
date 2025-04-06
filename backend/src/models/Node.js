@@ -36,6 +36,10 @@ const Node = sequelize.define(
       type: DataTypes.STRING,
       allowNull: true,
     },
+    ref: {
+      type: DataTypes.INTEGER,
+      allowNull: true,
+    },
   },
   {
     tableName: "nodes", // Ensure lowercase table name

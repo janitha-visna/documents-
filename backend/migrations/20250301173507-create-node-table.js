@@ -45,6 +45,11 @@ module.exports = {
         type: Sequelize.DATE,
         defaultValue: Sequelize.NOW,
       },
+      ref: {
+        // New column added
+        type: Sequelize.INTEGER,
+        allowNull: true, // Can be set to false if required
+      },
     });
   },
 
