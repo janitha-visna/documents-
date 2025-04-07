@@ -1,6 +1,7 @@
 const { extractMetadata } = require("../services/pdfService");
 const Document = require("../models/Document");
 const path = require("path");
+const Node = require("../models/Node");
 
 const uploadFile = async (req, res) => {
   if (!req.file) {
@@ -11,6 +12,10 @@ const uploadFile = async (req, res) => {
     // Extract metadata from the uploaded PDF
     const { uniqueId } = req.body;
     const metadata = await extractMetadata(req.file.path);
+
+    // Log the type and value of uniqueId
+    console.log("🆔 uniqueId value:", uniqueId);
+    console.log("🧪 Type of uniqueId:", typeof uniqueId);
 
     // Log values before saving to the database
     console.log("📄 Document to be saved:");
@@ -33,9 +38,22 @@ const uploadFile = async (req, res) => {
       ref: uniqueId,
     });
 
+    // Find and update the corresponding Node
+    const node = await Node.findOne({ where: { ref: uniqueId } });
+    // Log node details before update
+    console.log("🔍 Node search result:", node ? "EXISTS" : "NOT FOUND");
+    if (node) {
+      node.filename = document.filename;
+      await node.save();
+      console.log("Updated Node filename:", node.filename);
+    } else {
+      console.warn("No Node found with ref:", uniqueId);
+    }
+
     res.json({
       message: "File uploaded and metadata saved successfully",
       document,
+      node,
     });
   } catch (error) {
     console.error("Error uploading file:", error);
@@ -44,9 +62,6 @@ const uploadFile = async (req, res) => {
       .json({ message: "Failed to upload file and save metadata" });
   }
 };
-
-
-
 
 //controller to fetch documnts info from documnt model
 const getDocuments = async (req, res) => {
@@ -65,5 +80,3 @@ module.exports = {
   uploadFile,
   getDocuments,
 };
-
-

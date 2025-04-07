@@ -37,7 +37,7 @@ const Node = sequelize.define(
       allowNull: true,
     },
     ref: {
-      type: DataTypes.INTEGER,
+      type: DataTypes.STRING,
       allowNull: true,
     },
   },

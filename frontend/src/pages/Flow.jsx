@@ -39,6 +39,7 @@ const Flow = () => {
   const [title, setTitle] = useState("");
   const [file, setFile] = useState("");
   const [isCreating, setIsCreating] = useState(false);
+  const [uniqueId, setUniqueId] = useState(null);
 
   const saveToAPI = useCallback(() => {
     const payload = { nodes, edges };
@@ -196,18 +197,31 @@ const Flow = () => {
     setEdges((eds) => eds.filter((edge) => !edgesToDelete.includes(edge)));
   }, []);
 
-  // const addNode = () => {
-  //   const newNode = {
-  //     id: `${nodes.length + 1}`,
-  //     type: "custom",
-  //     position: { x: Math.random() * 500, y: Math.random() * 500 },
-  //     data: { label: `Node ${nodes.length + 1}` },
-  //   };
-  //   setNodes((nds) => [...nds, newNode]);
-  // };
-
   const addNode = () => {
     setIsCreating(true);
+  };
+  const generateUniqueId = () => {
+    const min = 10000; // Smallest 5-digit number
+    const max = 99999; // Largest 5-digit number
+    return Math.floor(Math.random() * (max - min + 1)) + min;
+  };
+
+  const updateNodeOutsideSubmit = async (passedUniqueId) => {
+    if (!passedUniqueId) {
+      console.error("Unique ID not available yet");
+      return;
+    }
+
+    try {
+      await axios.post(
+        "http://localhost:5000/api/nodes",
+        { uniqueId: String(passedUniqueId) },
+        { headers: { "Content-Type": "application/json" } }
+      );
+      console.log("Node updated with unique ID:", passedUniqueId);
+    } catch (error) {
+      console.error("Error updating node outside submit:", error);
+    }
   };
 
   const submitImage = useCallback(
@@ -216,29 +230,44 @@ const Flow = () => {
       if ((!isCreating && !editingNode) || !title || !file) return;
 
       try {
-        // 1. First save nodes/edges
-        const saveResponse = await fetch("http://localhost:5000/api/save", {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/json",
-          },
-          body: JSON.stringify({ nodes, edges }),
-        });
+        let generatedUniqueId;
+        if (isCreating) {
+          generatedUniqueId = generateUniqueId();
+          setUniqueId(generatedUniqueId); // Optional if you want to use it elsewhere
+        }
 
-        if (!saveResponse.ok) throw new Error("Failed to save flow");
+        // 1. Save nodes/edges
+        let saveSuccess = false;
+        try {
+          const saveResponse = await fetch("http://localhost:5000/api/save", {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({ nodes, edges }),
+          });
+          if (saveResponse.ok) saveSuccess = true;
+          else console.error("Save failed:", saveResponse.statusText);
+        } catch (saveError) {
+          console.error("Save error:", saveError);
+        }
 
-        // 2. After successful save, upload file
-        const formData = new FormData();
-        formData.append("file", file);
-        formData.append("title", title);
+        // 2. Upload file
+        let uploadResponse = null;
+        try {
+          const formData = new FormData();
+          formData.append("file", file);
+          formData.append("title", title);
+          formData.append("uniqueId", generatedUniqueId);
 
-        const uploadResponse = await axios.post(
-          "http://localhost:5000/api/upload",
-          formData,
-          { headers: { "Content-Type": "multipart/form-data" } }
-        );
+          uploadResponse = await axios.post(
+            "http://localhost:5000/api/upload",
+            formData,
+            { headers: { "Content-Type": "multipart/form-data" } }
+          );
+        } catch (uploadError) {
+          console.error("Upload error:", uploadError);
+        }
 
-        // 3. Update UI with new node/data
+        // 4. Update UI
         if (isCreating) {
           const newNode = {
             id: `${nodes.length + 1}`,
@@ -247,8 +276,10 @@ const Flow = () => {
             data: {
               label: title,
               pdfTitle: title,
-              pdfUrl: uploadResponse.data.fileUrl,
+              pdfUrl: uploadResponse?.data?.fileUrl || "", // fallback if upload fails
+              uniqueId: generatedUniqueId,
             },
+            ref: generatedUniqueId,
           };
           setNodes((nds) => [...nds, newNode]);
         } else {
@@ -260,7 +291,7 @@ const Flow = () => {
                     data: {
                       ...node.data,
                       pdfTitle: title,
-                      pdfUrl: uploadResponse.data.fileUrl,
+                      pdfUrl: uploadResponse?.data?.fileUrl || node.data.pdfUrl,
                     },
                   }
                 : node
@@ -273,13 +304,13 @@ const Flow = () => {
         setEditingNode(null);
         setTitle("");
         setFile(null);
+
+        // Optional delay before second update
+        await new Promise((resolve) => setTimeout(resolve, 2000));
+        await updateNodeOutsideSubmit(generatedUniqueId);
       } catch (error) {
-        console.error("Error:", error);
-        alert(
-          error.response?.data?.message ||
-            error.message ||
-            "An error occurred. Please try again."
-        );
+        console.error("Unexpected error:", error);
+        alert("An error occurred. Check the console for details.");
       }
     },
     [isCreating, editingNode, nodes, edges, title, file, setNodes]
@@ -320,68 +351,30 @@ const Flow = () => {
     }
   }, [setNodes, setEdges]);
 
+const showPdf = useCallback((filename) => {
+  window.open(
+    `http://localhost:5000/files/${filename}`,
+    "_blank",
+    "noreferrer"
+  );
+}, []);
+
   // Define the double-click handler function
-  const handleNodeDoubleClick = useCallback((event, node) => {
-    console.log("Node double-clicked:", node);
-    // You can perform any action here, such as opening a modal, editing the node, etc.
-    setEditingNode(node);
-    setTitle(node.data.pdfTitle || ""); // Initialize form with existing data
-  }, []);
+  const handleNodeDoubleClick = useCallback(
+    (event, node) => {
+      console.log("Node double-clicked:", node);
+      console.log("PDF Title:", node.data.pdfTitle);
 
-  // Add form submission handler
-  // const submitImage = useCallback(
-  //   async (e) => {
-  //     e.preventDefault();
+      // Open the PDF when node is double-clicked
+      if (node.filename) {
+        showPdf(node.filename);
+      }
 
-  //     if (!editingNode || !file) return;
-
-  //     const formData = new FormData();
-  //     formData.append("file", file);
-  //     formData.append("title", title);
-  //     //formData.append("nodeId", editingNode.id);
-
-  //     try {
-  //       const result = await axios.post(
-  //         "http://localhost:5000/api/upload",
-  //         formData,
-  //         {
-  //           headers: { "Content-Type": "multipart/form-data" },
-  //         }
-  //       );
-
-  //  Update the node data with PDF information
-  //   setNodes(
-  //     nodes.map((node) =>
-  //       node.id === editingNode.id
-  //         ? {
-  //             ...node,
-  //             data: {
-  //               ...node.data,
-  //               pdfTitle: title,
-  //               pdfUrl: result.data.fileUrl, // Access via result.data
-  //             },
-  //           }
-  //         : node
-  //     )
-  //   );
-
-  //       setEditingNode(null);
-  //       setTitle("");
-  //       setFile(null);
-  //     } catch (error) {
-  //       console.error("Upload error:", error.response?.data || error.message);
-  //       alert("Upload failed. Please try again.");
-  //     }
-  //   },
-  //   [editingNode, file, title, nodes, setNodes]
-  // );
-
-  // Add close form handler
-  // const closeForm = useCallback(() => {
-  //   setEditingNode(null);
-  //   setTitle("");
-  //   setFile(null);
-  // }, []);
+      
+      
+    },
+    [showPdf]
+  ); // Add showPdf to dependencies
 
   // Function to rename the selected node
   const handleRenameNode = useCallback(() => {
@@ -571,6 +564,20 @@ const Flow = () => {
           }}
         >
           Rename Node
+        </button>
+        {/* New button to trigger updateNodeOutsideSubmit */}
+        <button
+          onClick={updateNodeOutsideSubmit}
+          style={{
+            padding: "10px",
+            background: "#f39c12",
+            color: "#fff",
+            border: "none",
+            borderRadius: "5px",
+            cursor: "pointer",
+          }}
+        >
+          Update Node Outside Submit
         </button>
       </div>
     </div>

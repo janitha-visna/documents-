@@ -38,7 +38,7 @@ const Document = sequelize.define(
       defaultValue: DataTypes.NOW,
     },
     ref: {
-      type: DataTypes.INTEGER,
+      type: DataTypes.STRING,
       allowNull: true,
     },
   },

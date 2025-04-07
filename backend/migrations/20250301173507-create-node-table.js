@@ -47,7 +47,7 @@ module.exports = {
       },
       ref: {
         // New column added
-        type: Sequelize.INTEGER,
+        type: Sequelize.STRING,
         allowNull: true, // Can be set to false if required
       },
     });

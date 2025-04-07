@@ -4,6 +4,7 @@ const fileRoutes = require("./routes/fileRoutes");
 const flowRoutes = require("./routes/flowRoutes");
 const fetchflowRoutes = require("./routes/fetchflowRouter");
 const { ensureUploadsDirExists } = require("./config/fileSystem");
+const noderoute = require("./routes/findnoderouter");
 
 // Initialize Express app
 const app = express();
@@ -23,6 +24,7 @@ app.use(express.json());
 app.use("/api", fileRoutes);
 app.use("/api", flowRoutes); 
 app.use("/api",fetchflowRoutes);
+app.use("/api",noderoute);
 
 // Start the server
 app.listen(PORT, () => {

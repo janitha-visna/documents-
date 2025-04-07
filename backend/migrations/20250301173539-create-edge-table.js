@@ -6,7 +6,6 @@ module.exports = {
       edge_id: {
         type: Sequelize.INTEGER,
         primaryKey: true,
-        autoIncrement: true,
       },
       id: {
         type: Sequelize.STRING,

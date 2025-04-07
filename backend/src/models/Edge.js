@@ -7,7 +7,6 @@ const Edge = sequelize.define(
     edge_id: {
       type: DataTypes.INTEGER,
       primaryKey: true,
-      autoIncrement: true,
     },
     id: {
       type: DataTypes.STRING, // Now a regular field

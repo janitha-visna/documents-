@@ -1,7 +1,7 @@
 import React from 'react';
 import { createBrowserRouter } from "react-router-dom";
 import FileUpload from "../components/FileUpload";
-import Flow from "../pages/Flow";
+import Flow from '../pages/Flow';
 import PdfPage from "../pages/PdfPage";
 
 
