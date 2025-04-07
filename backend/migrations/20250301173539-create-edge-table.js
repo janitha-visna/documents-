@@ -3,9 +3,13 @@
 module.exports = {
   async up(queryInterface, Sequelize) {
     await queryInterface.createTable("edges", {
+      edge_id: {
+        type: Sequelize.INTEGER,
+        primaryKey: true,
+      },
       id: {
         type: Sequelize.STRING,
-        primaryKey: true,
+        allowNull: false,
       },
       type: {
         type: Sequelize.STRING,

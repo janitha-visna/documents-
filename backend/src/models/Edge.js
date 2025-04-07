@@ -4,9 +4,13 @@ const sequelize = require("../config/database");
 const Edge = sequelize.define(
   "Edge",
   {
-    id: {
-      type: DataTypes.STRING,
+    edge_id: {
+      type: DataTypes.INTEGER,
       primaryKey: true,
+    },
+    id: {
+      type: DataTypes.STRING, // Now a regular field
+      allowNull: false,
     },
     type: {
       type: DataTypes.STRING,

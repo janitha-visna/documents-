@@ -23,6 +23,18 @@ module.exports = {
         type: Sequelize.JSON,
         allowNull: false,
       },
+      filename: {
+        type: Sequelize.STRING,
+        allowNull: true,
+      },
+      title: {
+        type: Sequelize.STRING,
+        allowNull: true,
+      },
+      author: {
+        type: Sequelize.STRING,
+        allowNull: true,
+      },
       createdAt: {
         allowNull: false,
         type: Sequelize.DATE,
@@ -32,6 +44,11 @@ module.exports = {
         allowNull: false,
         type: Sequelize.DATE,
         defaultValue: Sequelize.NOW,
+      },
+      ref: {
+        // New column added
+        type: Sequelize.STRING,
+        allowNull: true, // Can be set to false if required
       },
     });
   },

@@ -24,6 +24,22 @@ const Node = sequelize.define(
       type: DataTypes.JSON,
       allowNull: false,
     },
+    filename: {
+      type: DataTypes.STRING,
+      allowNull: true, // Explicitly allow NULL (default is true)
+    },
+    title: {
+      type: DataTypes.STRING,
+      allowNull: true,
+    },
+    author: {
+      type: DataTypes.STRING,
+      allowNull: true,
+    },
+    ref: {
+      type: DataTypes.STRING,
+      allowNull: true,
+    },
   },
   {
     tableName: "nodes", // Ensure lowercase table name

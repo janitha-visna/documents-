@@ -45,6 +45,11 @@ module.exports = {
         allowNull: false,
         type: Sequelize.DATE,
       },
+      ref: {
+        // New column added
+        type: Sequelize.STRING,
+        allowNull: true, // Can be set to false if required
+      },
     });
   },
 

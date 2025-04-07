@@ -37,6 +37,10 @@ const Document = sequelize.define(
       type: DataTypes.DATE,
       defaultValue: DataTypes.NOW,
     },
+    ref: {
+      type: DataTypes.STRING,
+      allowNull: true,
+    },
   },
   {
     tableName: "documents", //  Ensure lowercase table name
