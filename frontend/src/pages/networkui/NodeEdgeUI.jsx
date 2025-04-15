@@ -18,9 +18,8 @@ import {
 } from "@xyflow/react";
 import axios from "axios";
 import "@xyflow/react/dist/style.css";
-
-import CustomNode from "./networkui/CustomNode";
-import CustomEdge from "./networkui/CustomEdge";
+import CustomNode from "./CustomNode";
+import CustomEdge from "./CustomEdge";
 
 const MIN_DISTANCE = 150;
 
@@ -41,6 +40,7 @@ const Flow = () => {
   const [isCreating, setIsCreating] = useState(false);
   const [uniqueId, setUniqueId] = useState(null);
 
+  //This function sends the current nodes and edges to the backend API.
   const saveToAPI = useCallback(() => {
     const payload = { nodes, edges };
 
@@ -69,8 +69,11 @@ const Flow = () => {
     return () => {
       if (debounceTimeout.current) clearTimeout(debounceTimeout.current);
     };
-  }, [nodes, edges, saveToAPI]);
+  }, [nodes, edges]);
 
+  //This useEffect sets up a debounced call to saveToAPI whenever nodes or edges change.
+  // preventing frequent saves during rapid changes (like dragging).
+  // It waits for 500ms after the last change before calling saveToAPI.
   useEffect(() => {
     fetch("http://localhost:5000/api/flow")
       .then((response) => response.json())
@@ -80,7 +83,12 @@ const Flow = () => {
             ...node,
             position: { x: node.position_x, y: node.position_y },
           }));
+          // const fetchedNodes = data.data.nodes;
           const fetchedEdges = data.data.edges;
+
+          // ✅ Log nodes and edges
+          console.log("Fetched Nodes:", JSON.stringify(fetchedNodes, null, 2));
+          console.log("Fetched Edges:", JSON.stringify(fetchedEdges, null, 2));
 
           setNodes(fetchedNodes);
           setEdges(fetchedEdges);
@@ -93,10 +101,18 @@ const Flow = () => {
       .catch((error) => console.error("Error fetching flow data:", error));
   }, []);
 
+  //Gets the current state of all nodes from the store.
+  //Iterates over all other nodes to find the closest one within a specified minimum distance.
+  //Calculate the straight-line (Euclidean) distance between two nodes using Pythagoras theorem.
   const getClosestEdge = useCallback(
     (node) => {
       const { nodeLookup } = store.getState();
       const internalNode = getInternalNode(node.id);
+
+      // Log nodeLookup and internalNode
+      console.log("nodeLookup contents:", Array.from(nodeLookup.entries()));
+      console.log("internalNode:", internalNode);
+      console.log("current node (parameter):", node);
 
       const closestNode = Array.from(nodeLookup.values()).reduce(
         (res, n) => {
@@ -200,12 +216,14 @@ const Flow = () => {
   const addNode = () => {
     setIsCreating(true);
   };
+
   const generateUniqueId = () => {
     const min = 10000; // Smallest 5-digit number
     const max = 99999; // Largest 5-digit number
     return Math.floor(Math.random() * (max - min + 1)) + min;
   };
 
+  //Update a node with the unique ID after a delay or external process
   const updateNodeOutsideSubmit = async (passedUniqueId) => {
     if (!passedUniqueId) {
       console.error("Unique ID not available yet");
@@ -224,6 +242,7 @@ const Flow = () => {
     }
   };
 
+  // Handles the PDF submission
   const submitImage = useCallback(
     async (e) => {
       e.preventDefault();
@@ -351,13 +370,13 @@ const Flow = () => {
     }
   }, [setNodes, setEdges]);
 
-const showPdf = useCallback((filename) => {
-  window.open(
-    `http://localhost:5000/files/${filename}`,
-    "_blank",
-    "noreferrer"
-  );
-}, []);
+  const showPdf = useCallback((filename) => {
+    window.open(
+      `http://localhost:5000/files/${filename}`,
+      "_blank",
+      "noreferrer"
+    );
+  }, []);
 
   // Define the double-click handler function
   const handleNodeDoubleClick = useCallback(
@@ -369,9 +388,6 @@ const showPdf = useCallback((filename) => {
       if (node.filename) {
         showPdf(node.filename);
       }
-
-      
-      
     },
     [showPdf]
   ); // Add showPdf to dependencies
@@ -564,20 +580,6 @@ const showPdf = useCallback((filename) => {
           }}
         >
           Rename Node
-        </button>
-        {/* New button to trigger updateNodeOutsideSubmit */}
-        <button
-          onClick={updateNodeOutsideSubmit}
-          style={{
-            padding: "10px",
-            background: "#f39c12",
-            color: "#fff",
-            border: "none",
-            borderRadius: "5px",
-            cursor: "pointer",
-          }}
-        >
-          Update Node Outside Submit
         </button>
       </div>
     </div>
