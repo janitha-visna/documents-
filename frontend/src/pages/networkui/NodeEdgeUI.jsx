@@ -1,3 +1,4 @@
+import "./NodeEdgeUI.css"; // Import your CSS file for styling
 import React, { useCallback, useRef, useEffect, useState } from "react";
 import {
   ReactFlow,
@@ -39,8 +40,52 @@ const Flow = () => {
   const [file, setFile] = useState("");
   const [isCreating, setIsCreating] = useState(false);
   const [uniqueId, setUniqueId] = useState(null);
+  // Add these new state variables at the top of your component
+  const [workspaces, setWorkspaces] = useState([
+    { id: "1", name: "Default Workspace", nodes: [], edges: [] },
+  ]);
+  const [newWorkspaceName, setNewWorkspaceName] = useState("");
+
+  // Log workspaces whenever they change (optional)
+  useEffect(() => {
+    console.log("Workspaces updated:", workspaces);
+  }, [workspaces]);
 
   //This function sends the current nodes and edges to the backend API.
+  // Local workspace management
+  const createWorkspace = useCallback(() => {
+    if (!newWorkspaceName) return;
+
+    const newWorkspace = {
+      id: Date.now().toString(),
+      name: newWorkspaceName,
+      isSelected: true,
+    };
+
+    setWorkspaces((prev) => [
+      ...prev.map((ws) => ({ ...ws, isSelected: false })),
+      newWorkspace,
+    ]);
+    setNewWorkspaceName("");
+  }, [newWorkspaceName]);
+
+  const selectWorkspace = useCallback(
+    (workspaceId) => {
+      setWorkspaces((prev) => {
+        const updated = prev.map((ws) => ({
+          ...ws,
+          isSelected: ws.id === workspaceId,
+        }));
+        const selected = updated.find((ws) => ws.id === workspaceId);
+        if (selected) {
+          
+        }
+        return updated;
+      });
+    },
+    []
+  );
+
   const saveToAPI = useCallback(() => {
     const payload = { nodes, edges };
 
@@ -432,23 +477,8 @@ const Flow = () => {
         <Background variant="dots" gap={12} size={1} />
       </ReactFlow>
       {(isCreating || editingNode) && (
-        <div
-          style={{
-            position: "absolute",
-            top: "50%",
-            left: "50%",
-            transform: "translate(-50%, -50%)",
-            zIndex: 1000,
-            background: "white",
-            padding: "20px",
-            borderRadius: "8px",
-            boxShadow: "0 2px 10px rgba(0,0,0,0.1)",
-          }}
-        >
-          <form
-            onSubmit={submitImage}
-            style={{ display: "flex", flexDirection: "column", gap: "10px" }}
-          >
+        <div className="form-modal">
+          <form onSubmit={submitImage} className="form">
             <h4>
               {isCreating
                 ? "Upload PDF for New Node"
@@ -460,127 +490,89 @@ const Flow = () => {
               value={title}
               onChange={(e) => setTitle(e.target.value)}
               required
-              style={{
-                padding: "8px",
-                borderRadius: "4px",
-                border: "1px solid #ddd",
-              }}
+              className="form-input"
             />
             <input
               type="file"
               accept="application/pdf"
               onChange={(e) => setFile(e.target.files[0])}
               required
-              style={{ padding: "4px" }}
+              className="file-input"
             />
-            <div
-              style={{
-                display: "flex",
-                gap: "10px",
-                justifyContent: "flex-end",
-              }}
-            >
+            <div className="button-group">
               <button
                 type="button"
                 onClick={closeForm}
-                style={{
-                  padding: "8px 16px",
-                  background: "#ff4444",
-                  color: "white",
-                  border: "none",
-                  borderRadius: "4px",
-                  cursor: "pointer",
-                }}
+                className="btn btn-cancel"
               >
                 Cancel
               </button>
-              <button
-                type="submit"
-                style={{
-                  padding: "8px 16px",
-                  background: "#4CAF50",
-                  color: "white",
-                  border: "none",
-                  borderRadius: "4px",
-                  cursor: "pointer",
-                }}
-              >
+              <button type="submit" className="btn btn-upload">
                 Upload
               </button>
             </div>
           </form>
         </div>
       )}
-      <div
-        style={{
-          position: "absolute",
-          top: "10px",
-          left: "10px",
-          zIndex: 10,
-          display: "flex",
-          flexDirection: "column",
-          gap: "10px", // Add spacing between buttons
-        }}
-      >
-        <button
-          onClick={addNode}
-          style={{
-            padding: "10px",
-            background: "#007bff",
-            color: "#fff",
-            border: "none",
-            borderRadius: "5px",
-            cursor: "pointer",
-          }}
-        >
+
+      <div className="controls-container">
+        <button onClick={addNode} className="control-btn btn-primary">
           Add Node
         </button>
-
         <button
           onClick={deleteNode}
           disabled={!selectedNode}
-          style={{
-            padding: "10px",
-            background: "#ff4d4d",
-            color: "#fff",
-            border: "none",
-            borderRadius: "5px",
-            cursor: "pointer",
-            opacity: selectedNode ? 1 : 0.5,
-          }}
+          className="control-btn btn-danger"
         >
           Delete Node
         </button>
         <button
           onClick={handleDeleteAllNodes}
           disabled={nodes.length === 0}
-          style={{
-            padding: "10px",
-            background: "#ff6b6b",
-            color: "#fff",
-            border: "none",
-            borderRadius: "5px",
-            cursor: "pointer",
-            opacity: nodes.length === 0 ? 0.5 : 1,
-          }}
+          className="control-btn btn-warning"
         >
           Delete All Nodes
         </button>
         <button
           onClick={handleRenameNode}
           disabled={!selectedNode}
-          style={{
-            padding: "10px",
-            background: "#4CAF50",
-            color: "#fff",
-            border: "none",
-            borderRadius: "5px",
-            cursor: "pointer",
-            opacity: selectedNode ? 1 : 0.5,
-          }}
+          className="control-btn btn-success"
         >
           Rename Node
         </button>
+      </div>
+      {/* Workspace Directory Panel */}
+      <div className="workspace-panel">
+        <div className="workspace-header">
+          <input
+            type="text"
+            placeholder="New Workspace"
+            value={newWorkspaceName}
+            onChange={(e) => setNewWorkspaceName(e.target.value)}
+            className="workspace-input"
+          />
+          <button onClick={createWorkspace} className="btn-create-workspace">
+            Create
+          </button>
+        </div>
+
+        <div className="workspace-list">
+          {workspaces.map((workspace) => (
+            <div
+              key={workspace.id}
+              className={`workspace-item ${
+                workspace.isSelected ? "selected" : ""
+              }`}
+              onClick={() => selectWorkspace(workspace.id)}
+            >
+              <div className="workspace-name">{workspace.name}</div>
+              <div className="workspace-meta">
+                <span>Nodes: {workspace.nodes.length}</span>
+                <span>Edges: {workspace.edges.length}</span>
+              </div>
+            </div>
+          ))}
+        </div>
       </div>
     </div>
   );
