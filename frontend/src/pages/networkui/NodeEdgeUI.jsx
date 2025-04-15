@@ -19,8 +19,8 @@ import {
 import axios from "axios";
 import "@xyflow/react/dist/style.css";
 
-import CustomNode from "./networkui/CustomNode";
-import CustomEdge from "./networkui/CustomEdge";
+import CustomNode from "./CustomNode";
+import CustomEdge from "./CustomEdge";
 
 const MIN_DISTANCE = 150;
 
@@ -65,6 +65,7 @@ const Flow = () => {
   useEffect(() => {
     if (debounceTimeout.current) clearTimeout(debounceTimeout.current);
     debounceTimeout.current = setTimeout(saveToAPI, 500);
+    
 
     return () => {
       if (debounceTimeout.current) clearTimeout(debounceTimeout.current);
@@ -82,6 +83,10 @@ const Flow = () => {
           }));
           const fetchedEdges = data.data.edges;
 
+          // ✅ Log nodes and edges
+          console.log("Fetched Nodes:", JSON.stringify(fetchedNodes, null, 2));
+          console.log("Fetched Edges:", JSON.stringify(fetchedEdges, null, 2));
+
           setNodes(fetchedNodes);
           setEdges(fetchedEdges);
           console.log(
@@ -97,6 +102,11 @@ const Flow = () => {
     (node) => {
       const { nodeLookup } = store.getState();
       const internalNode = getInternalNode(node.id);
+
+      // Log nodeLookup and internalNode
+      console.log("nodeLookup contents:", Array.from(nodeLookup.entries()));
+      console.log("internalNode:", internalNode);
+      console.log("current node (parameter):", node);
 
       const closestNode = Array.from(nodeLookup.values()).reduce(
         (res, n) => {
