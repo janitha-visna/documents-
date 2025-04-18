@@ -28,6 +28,7 @@ const nodeTypes = { custom: CustomNode };
 const edgeTypes = { straight: CustomEdge };
 
 const Flow = () => {
+   const [error, setError] = useState(null);
   const store = useStoreApi();
   const { getInternalNode } = useReactFlow();
   const edgeReconnectSuccessful = useRef(true);
@@ -329,6 +330,17 @@ const Flow = () => {
           );
         } catch (uploadError) {
           console.error("Upload error:", uploadError);
+          // Handle duplicate file error
+          if (
+            uploadError.response?.data?.message === "Duplicate file detected."
+          ) {
+            setError(
+              "This file has already been uploaded. Please choose a different file."
+            );
+          } else {
+            setError("Upload failed. Please try again.");
+          }
+          return; // Exit the function to prevent UI updates
         }
 
         // 4. Update UI
@@ -574,6 +586,24 @@ const Flow = () => {
           ))}
         </div>
       </div>
+      {/* Error message overlay for duplicate files*/}
+      {error && (
+        <div className="error-message-container">
+          <div className="error-box">
+            <div className="error-icon">⚠️</div>
+            <h3 className="error-title">Upload Error</h3>
+            <p className="error-message">{error}</p>
+            <div className="error-buttons">
+              <button
+                className="btn-error-confirm"
+                onClick={() => setError(null)}
+              >
+                OK
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 };
