@@ -1,0 +1,143 @@
+/* LandingPage.css */
+.landing-container {
+  display: flex;
+  height: 100vh;
+  width: 100%;
+  overflow: hidden;
+  position: relative;
+}
+
+.left-column, .right-column {
+  flex: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 2rem;
+  box-sizing: border-box;
+  position: relative;
+  overflow: hidden;
+}
+
+.left-column {
+  background: linear-gradient(135deg, #e0f2fe 0%, #bae6fd 100%);
+}
+
+.right-column {
+  background: #f8fafc;
+  flex-direction: column;
+}
+
+.search-wrapper {
+  width: 100%;
+  max-width: 800px;
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+}
+
+.launch-button {
+  background-color: #3b82f6;
+  color: white;
+  border: none;
+  padding: 1.5rem 3rem;
+  border-radius: 12px;
+  font-size: 1.1rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+}
+
+.button-icon {
+  width: 24px;
+  height: 24px;
+  fill: currentColor;
+}
+
+.launch-button:hover {
+  background-color: #2563eb;
+  transform: translateY(-2px);
+  box-shadow: 0 6px 12px rgba(0, 0, 0, 0.15);
+}
+
+@media (max-width: 768px) {
+  .landing-container {
+    flex-direction: column;
+    height: auto;
+    min-height: 100vh;
+  }
+  
+  .left-column, .right-column {
+    min-height: 50vh;
+    width: 100%;
+    padding: 1.5rem;
+  }
+
+  .search-wrapper {
+    height: auto;
+  }
+
+  .launch-button {
+    width: 100%;
+    justify-content: center;
+  }
+}
+
+/* Custom Scrollbar */
+::-webkit-scrollbar {
+  width: 8px;
+}
+
+::-webkit-scrollbar-track {
+  background: #f1f5f9;
+}
+
+::-webkit-scrollbar-thumb {
+  background: #cbd5e1;
+  border-radius: 4px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: #94a3b8;
+}
+
+/* LandingPage.css */
+.landing-container {
+  display: flex;
+  height: 100vh;
+  width: 100%;
+  overflow: hidden;
+  position: relative;
+}
+
+.left-column, .right-column {
+  flex: 1;
+  display: flex;
+  padding: 2rem;
+  box-sizing: border-box;
+  position: relative;
+}
+
+.left-column {
+  background: linear-gradient(135deg, #e0f2fe 0%, #bae6fd 100%);
+  align-items: center;
+  justify-content: center;
+}
+
+.right-column {
+  background: #f8fafc;
+  align-items: flex-start; /* Changed from center */
+  justify-content: flex-start; /* Changed from center */
+  padding-top: 4rem; /* Added top padding */
+}
+
+.search-wrapper {
+  width: 100%;
+  max-width: 800px;
+  margin: 0 auto; /* Center horizontally */
+}
+
+/* Rest of the existing styles remain the same */

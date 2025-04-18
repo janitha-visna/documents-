@@ -1,0 +1,50 @@
+[
+  {
+    "id": 1,
+    "title": "1744746285294",
+    "filename": "1744746285294.pdf",
+    "content": "\n\n \n \n \n \n \n \n \nAGILE PROJECT \nUnit Test Cases \nFor \nA.A. Samarasinghe Opticians \n \nAuthor: L.G.V.O.Wijerathne (Quality Manager) \n \nOwner: Dinuri Edirisinghe \nClient: A.A. Samarasinghe Opticians \n \nDocument Ref: UnitTest_Cases_V1.0 \nVersion No: 1.0 \n \n \n \n \n \n \n \n \n \n\nUnit testing for A.A. Samarasinghe Opticians \nPage 2 \n \n \nUnit Testing \nIntroduction \nThis report summarizes the test results for the AI-powered consultation booking chatbot \ndeveloped for A.A. Samarasinghe Opticians. The new system addresses inefficiencies in the \nmanual reservation process by automating appointment scheduling through natural language \nprocessing. The tests confirm secure user authentication, robust appointment management, \nand efficient admin functionality. All test cases have passed, indicating that the system is \nready for deployment. \n \n1. Unit Tests for User Model (UserTest) \nObjective: \nTo validate the core functionalities of the User model, ensuring security and data integrity. \nTest Results: \n• U"
+  },
+  {
+    "id": 2,
+    "title": "1744746420470",
+    "filename": "1744746420470.pdf",
+    "content": "\n\nRISK LOG FORM 007 \nRef: \nVersion:007 \nProgramme:AGILE PROJECT \nMANAGEMENT \n \nProject: AI Chatbot for the official \nwebsite of \nA. A. Samarasinghe Opticians. \nPRINCE2 \nRISK \nIDENTIFIER: \n017 \nDescription: No unit testing was conducted during Sprint 1 and \nSprint 2, which may lead to undetected issues in the final \nproduct. \nRisk Category: \n Technical \nProbability: \nMedium \nImpact: \nThere may be bugs in the final product, leading to functionality \nissues and poor user experience. \nProximity: \nNear-term \nProximity \nCountermeasures: \nImplement automated unit testing using Laravel PHPUnit for upcoming sprints to ensure code quality \nand early bug detection. \nOwner: \nQuality manger- \nL.G.V.O.Wijerathne\n. \nAuthor: \nRisk manager- \nH.P.J.Visna \nDate Identified: \n14/03/2025 \nDate of Last \nUpdate: \n14/03/2025 \nCurrent Status: \nOpen \n "
+  },
+  {
+    "id": 3,
+    "title": "1744971223850",
+    "filename": "1744971223850.pdf",
+    "content": "\n\nFeasibility Report \n \nProject Overview \nThe proposed Document Management System (DMS) is designed for personal use, offering a \ncomprehensive and efficient way to manage documents offline. The system aims to provide users with \nan organized structure to store, access, and interact with documents, while ensuring that key \nfunctionalities such as search capabilities, version control, audit trails, and reminders are available for \nseamless user experience. \n \nProject Objectives \n• To identify existing systems and solution which are given to the users. \n• To design user friendly interface to ensure user interaction. \n• To implement Attribute-Based Search component to locate documents efficiently. \n• To implement a flexible search component, enable users to do custom query. \n• To implement an audit trail logging component to track user interaction with documents. \n• To implement a reminder component to remind about forthcoming academics activities. \n• To test and evaluate the system with "
+  },
+  {
+    "id": 4,
+    "title": "1744971421214",
+    "filename": "1744971421214.pdf",
+    "content": "\n\n2425243                                                                           Hearth Pathirange Janitha Visna \n                                                                                                             \ni \n \n \n \n \n \n \nBSc (Hons) Computer Science \n \n \nREFLECTIVE REPORT \nThe Role of Risk Manager \nFor \nAI Chatbot and Website of A. A. Samarasinghe \nOpticians \n \n \n \n \nStudent Name: Hearth Pathirange Janitha Visna \nStudent ID: 2425243 \nGroup No: 10 \nUnit Name: Agile project management \nDate of Submission: 4\nth  \nof \n \nmarch 2025 \n\n2425243                                                                           Hearth Pathirange Janitha Visna \n                                                                                                             \nii \n \n \nTable of Contents  \n \n1. Introduction .......................................................................................................................... 1 \n1.1 Project overview ..........................."
+  },
+  {
+    "id": 5,
+    "title": "1744971615943",
+    "filename": "1744971615943.pdf",
+    "content": "\n\n2425243                                                                           Hearth Pathirange Janitha Visna \n                                                                                                             \ni \n \n \n \n \n \n \nBSc (Hons) Computer Science \n \n \nREFLECTIVE REPORT \nThe Role of Risk Manager \nFor \nAI Chatbot and Website of A. A. Samarasinghe \nOpticians \n \n \n \n \nStudent Name: Hearth Pathirange Janitha Visna \nStudent ID: 2425243 \nGroup No: 10 \nUnit Name: Agile project management \nDate of Submission: 4\nth  \nof \n \nmarch 2025 \n\n2425243                                                                           Hearth Pathirange Janitha Visna \n                                                                                                             \nii \n \n \nTable of Contents  \n \n1. Introduction .......................................................................................................................... 1 \n1.1 Project overview ..........................."
+  },
+  {
+    "id": 6,
+    "title": "1744980357656",
+    "filename": "1744980357656.pdf",
+    "content": "\n\nApplication Design and Interoperability for Managing\nPersonal Information in the Semantic Desktop\n?\nHuiyong XiaoIsabel F. Cruz\nDepartment of Computer Science\nUniversity of Illinois at Chicago\n{hxiao|ifc}@cs.uic.edu\nAbstract.A number ofsemantic desktopframeworks have been proposed that\naddress different issues in personal information management, including the or-\nganization, manipulation, and visualization of personal data. Our approach com-\nprises a layered multi-ontology based framework, MOSE. In this paper, we de-\nscribe how the architecture of MOSE supports an application centered seman-\ntic approach to personal information management. In particular, we introduce a\nmethod based on the Model-View-Controller paradigm forpersonal information\napplication(PIA) development, as enabled by the underlying semantic data or-\nganization and specified by thePIA designer. We also introduce the notion of\nparameterized channeland describe how it supports the interaction among mul-\ntiple visualiza"
+  },
+  {
+    "id": 7,
+    "title": "1744982861453",
+    "filename": "1744982861453.pdf",
+    "content": "\n\n \n \n \n \n \n \n \nAGILE PROJECT \nUnit Test Cases \nFor \nA.A. Samarasinghe Opticians \n \nAuthor: L.G.V.O.Wijerathne (Quality Manager) \n \nOwner: Dinuri Edirisinghe \nClient: A.A. Samarasinghe Opticians \n \nDocument Ref: UnitTest_Cases_V1.0 \nVersion No: 1.0 \n \n \n \n \n \n \n \n \n \n\nUnit testing for A.A. Samarasinghe Opticians \nPage 2 \n \n \nUnit Testing \nIntroduction \nThis report summarizes the test results for the AI-powered consultation booking chatbot \ndeveloped for A.A. Samarasinghe Opticians. The new system addresses inefficiencies in the \nmanual reservation process by automating appointment scheduling through natural language \nprocessing. The tests confirm secure user authentication, robust appointment management, \nand efficient admin functionality. All test cases have passed, indicating that the system is \nready for deployment. \n \n1. Unit Tests for User Model (UserTest) \nObjective: \nTo validate the core functionalities of the User model, ensuring security and data integrity. \nTest Results: \n• U"
+  },
+  {
+    "id": 8,
+    "title": "1745001015173",
+    "filename": "1745001015173.pdf",
+    "content": "\n\n \n \n \n \n \n \n \nAGILE PROJECT \nUnit Test Cases \nFor \nA.A. Samarasinghe Opticians \n \nAuthor: L.G.V.O.Wijerathne (Quality Manager) \n \nOwner: Dinuri Edirisinghe \nClient: A.A. Samarasinghe Opticians \n \nDocument Ref: UnitTest_Cases_V1.0 \nVersion No: 1.0 \n \n \n \n \n \n \n \n \n \n\nUnit testing for A.A. Samarasinghe Opticians \nPage 2 \n \n \nUnit Testing \nIntroduction \nThis report summarizes the test results for the AI-powered consultation booking chatbot \ndeveloped for A.A. Samarasinghe Opticians. The new system addresses inefficiencies in the \nmanual reservation process by automating appointment scheduling through natural language \nprocessing. The tests confirm secure user authentication, robust appointment management, \nand efficient admin functionality. All test cases have passed, indicating that the system is \nready for deployment. \n \n1. Unit Tests for User Model (UserTest) \nObjective: \nTo validate the core functionalities of the User model, ensuring security and data integrity. \nTest Results: \n• U"
+  }
+]
